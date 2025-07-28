@@ -1,0 +1,32 @@
+version: "3.8"
+services:
+  redis:
+    build: .
+    container_name: redis-server
+    hostname: redis-server
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+      - redis_logs:/var/log/redis
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_MAXMEMORY=${REDIS_MAXMEMORY}
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+        reservations:
+          cpus: '0.25'
+          memory: 256M
+    restart: always
+
+volumes:
+  redis_data:
+  redis_logs:
